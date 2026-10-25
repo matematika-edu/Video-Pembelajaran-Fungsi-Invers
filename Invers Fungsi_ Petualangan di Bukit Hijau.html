@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Invers Fungsi: Petualangan di Bukit Hijau</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--s1:#9fd3ea;--s2:#fbf1d3;--h1:#9ccc88;--h2:#74b27a;--card:#fffaf0;--tx:#35504a;--mut:#6d7f74;--bd:#d8c79d;--hl:rgba(122,168,116,.18)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--s1:#18284a;--s2:#3b3a66;--h1:#2e5a45;--h2:#234a3a;--card:#27302d;--tx:#f0ead8;--mut:#b5bfae;--bd:#4b5a4d;--hl:rgba(150,200,140,.16)}}
+:root[data-theme="dark"]{--s1:#18284a;--s2:#3b3a66;--h1:#2e5a45;--h2:#234a3a;--card:#27302d;--tx:#f0ead8;--mut:#b5bfae;--bd:#4b5a4d;--hl:rgba(150,200,140,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:"Nunito","Segoe UI",Arial,sans-serif;color:var(--tx);padding:14px;display:flex;justify-content:center;background:linear-gradient(var(--s1),var(--s2))}
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.scene svg{position:absolute;bottom:0;left:0;width:100%;height:38%}
+.cl{position:absolute;background:#fff;opacity:.8;border-radius:60px;width:120px;height:34px;animation:dr 70s linear infinite}
+.cl::before,.cl::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cl::before{width:50px;height:50px;left:18px;top:-24px}.cl::after{width:38px;height:38px;left:62px;top:-16px}
+@keyframes dr{from{transform:translateX(-200px)}to{transform:translateX(110vw)}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cl{opacity:.12}}
+.wrap{position:relative;z-index:1;width:100%;max-width:980px}
+.stage{background:var(--card);border:3px solid var(--bd);border-radius:24px;overflow:hidden;box-shadow:0 10px 30px rgba(60,80,60,.25)}
+.top{padding:12px 20px;color:#fff;font-weight:800;font-size:clamp(17px,2.8vw,24px);display:flex;justify-content:space-between;gap:10px;align-items:center}
+.top small{font-weight:700;opacity:.95;font-size:.62em;background:rgba(255,255,255,.28);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.main{display:grid;grid-template-columns:1fr;gap:6px;padding:12px 18px;min-height:340px}
+@media(min-width:760px){.main{grid-template-columns:34% 1fr;align-items:center}}
+.vis{display:flex;align-items:center;justify-content:center;font-size:clamp(34px,6vw,54px);text-align:center;line-height:1.3;min-height:120px;animation:in .8s ease both}
+.vis svg{width:100%;max-width:300px;height:auto}
+.vis .chip{display:inline-block;background:var(--hl);border:2px dashed var(--bd);border-radius:14px;padding:4px 12px;font-size:.55em;font-weight:800;margin:4px}
+.body{display:flex;flex-direction:column;gap:8px}
+.ln{font-size:clamp(15px,2.5vw,23px);line-height:1.55;padding:6px 14px;border-left:6px solid transparent;border-radius:12px;animation:in .6s ease both;overflow-x:auto;font-weight:600}
+.ln.cur{background:var(--hl);border-left-color:var(--ac)}
+.ln.syarat{color:#b3541e}.ln.ok{color:#2f7d4a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ln.syarat{color:#ffb86b}:root:not([data-theme="light"]) .ln.ok{color:#8be0a0}}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px;line-height:1.25;font-size:.92em}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
+.rt .ro{border-top:2px solid currentColor;padding:0 3px}
+.cap{display:flex;gap:10px;align-items:center;padding:10px 16px;border-top:2px dashed var(--bd)}
+.cap svg{flex:none;width:46px;height:46px}
+.bub{background:var(--hl);border-radius:16px;padding:8px 14px;color:var(--mut);font-size:clamp(13px,2vw,16px);font-weight:700;min-height:42px;flex:1}
+.bar{height:8px;background:var(--hl)}.bar i{display:block;height:100%;width:0;border-radius:0 8px 8px 0;transition:width .4s}
+.ctl{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+button{font:inherit;font-weight:800;padding:10px 18px;border-radius:30px;border:2px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;font-size:15px}
+button.p{background:#74b27a;color:#fff;border-color:#5b9a63;min-width:130px}
+button.on{outline:3px solid #e9b44c}
+</style>
+</head>
+<body>
+<div class="scene">
+ <div class="cl" style="top:9%;animation-delay:-10s"></div>
+ <div class="cl" style="top:20%;animation-delay:-45s;transform:scale(.7)"></div>
+ <div class="cl" style="top:5%;animation-delay:-28s;transform:scale(1.2)"></div>
+ <svg viewBox="0 0 1000 300" preserveAspectRatio="none"><path d="M0 120 Q200 20 420 110 T1000 80 V300 H0Z" fill="var(--h1)"/><path d="M0 200 Q250 110 520 190 T1000 170 V300 H0Z" fill="var(--h2)"/></svg>
+</div>
+<div class="wrap">
+ <div class="stage" id="stage">
+  <div class="top" id="top"></div>
+  <div class="main"><div class="vis" id="vis"></div><div class="body" id="body"></div></div>
+  <div class="cap">
+   <svg viewBox="0 0 48 48"><circle cx="24" cy="27" r="17" fill="#eef3e4" stroke="#7aa874" stroke-width="2.5"/><circle cx="18" cy="25" r="3.2" fill="#35504a"/><circle cx="30" cy="25" r="3.2" fill="#35504a"/><ellipse cx="24" cy="33" rx="3" ry="2" fill="#e9a08a"/><path d="M24 10 q-2 -8 8 -8 q0 8 -8 8z" fill="#74b27a"/></svg>
+   <div class="bub" id="cap"></div>
+  </div>
+  <div class="bar"><i id="pg"></i></div>
+ </div>
+ <div class="ctl">
+  <button id="bPrev">⏮ Mundur</button>
+  <button id="bPlay" class="p">▶ Putar</button>
+  <button id="bNext">Maju ⏭</button>
+  <button id="bVoice">🔇 Suara: mati</button>
+ </div>
+</div>
+<script>
+const F=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const R=x=>`<span class="rt">√<span class="ro">${x}</span></span>`;
+const par=h=>`<svg viewBox="0 0 260 150"><path d="M30 20 Q130 220 230 20" fill="none" stroke="#7aa874" stroke-width="${h?3:5}" opacity="${h?.35:1}" stroke-linecap="round"/>${h?'<path d="M130 120 Q180 120 230 20" fill="none" stroke="#e07a5f" stroke-width="6" stroke-linecap="round"/>':'<line x1="50" y1="56" x2="210" y2="56" stroke="#e9b44c" stroke-width="2.5" stroke-dasharray="5 5"/><circle cx="50" cy="56" r="7" fill="#e07a5f"/><circle cx="210" cy="56" r="7" fill="#e07a5f"/>'}<line x1="130" y1="8" x2="130" y2="135" stroke="#6a9fb5" stroke-width="2.5" stroke-dasharray="6 5"/><text x="136" y="20" font-size="13" fill="#6a9fb5" font-weight="800">x = p</text></svg>`;
+const mesin=`<svg viewBox="0 0 280 150"><rect x="90" y="22" width="100" height="62" rx="16" fill="#f3d9a4" stroke="#a07c44" stroke-width="3"/><text x="140" y="64" text-anchor="middle" font-size="30" font-weight="800" fill="#5b4326">f</text><text x="40" y="58" text-anchor="middle" font-size="22" fill="#35504a" font-weight="800">x ➜</text><text x="240" y="58" text-anchor="middle" font-size="22" fill="#35504a" font-weight="800">➜ y</text><rect x="90" y="96" width="100" height="44" rx="14" fill="#cfe8c4" stroke="#5b9a63" stroke-width="3" stroke-dasharray="6 4"/><text x="140" y="125" text-anchor="middle" font-size="22" font-weight="800" fill="#2f5d3a">f⁻¹</text><text x="40" y="125" text-anchor="middle" font-size="18" fill="#2f5d3a" font-weight="800">x ⬅</text><text x="240" y="125" text-anchor="middle" font-size="18" fill="#2f5d3a" font-weight="800">⬅ y</text></svg>`;
+const S=[
+{c:"#7aa874",t:"Apa itu Fungsi Invers?",v:mesin,s:[
+ ["Fungsi f itu seperti <b>mesin ajaib</b> 🪄: masuk x, keluar y","Bayangkan fungsi f sebagai mesin ajaib. Kamu masukkan x, dan keluar y."],
+ ["Invers f⁻¹ = <b>mesin kebalikan</b>: masuk y, keluar x lagi","Fungsi invers adalah mesin kebalikannya. Kamu masukkan y, dan keluar x yang tadi."],
+ ["Syarat: f harus <b>satu-satu</b> (tiap hasil berasal dari satu masukan)","Syaratnya, f harus satu-satu. Setiap hasil hanya boleh berasal dari satu masukan.","syarat"],
+ ["Kita bahas invers fungsi <b>linear</b>, <b>rasional</b>, dan <b>kuadrat</b>, beserta domain inversnya","Kita akan membahas invers dari fungsi linear, rasional, dan kuadrat, beserta domain inversnya.","ok"]]},
+{c:"#e9b44c",t:"Invers Fungsi Linear",v:`🧦➜👟<br>👟➜🧦`,s:[
+ ["Bentuk umum: f(x) = ax + b , <b>a ≠ 0</b>","Bentuk umum fungsi linear adalah f x sama dengan a x tambah b, dengan a tidak sama dengan nol.","syarat"],
+ ["<b>1. Misalkan</b> f(x) = y → y = ax + b","Langkah satu, misalkan f x sama dengan y."],
+ ["<b>2. Tukar posisi x dan y:</b> x = ay + b","Langkah dua, tukar posisi x dan y."],
+ ["<b>3. Selesaikan untuk memperoleh y:</b> x − b = ay","Langkah tiga, selesaikan untuk memperoleh y. Pindahkan b ke ruas kiri."],
+ ["y = "+F("x − b","a"),"Bagi kedua ruas dengan a."],
+ ["<b>4. Ganti y dengan f⁻¹(x):</b> f⁻¹(x) = "+F("x − b","a"),"Langkah empat, ganti y dengan f invers x. Jadi bentuk invers fungsi linear adalah x kurang b per a.","ok"],
+ ["<b>Domain f⁻¹:</b> tidak ada variabel x di penyebut, dan tidak ada akar yang membatasi x","Sekarang domain inversnya. Lihat apakah ada x di penyebut atau akar yang membatasi x. Pada fungsi linear, tidak ada.","syarat"],
+ ["Jika a ≠ 0 dan domain awal semua bilangan real: <b>D<sub>f⁻¹</sub> = ℝ</b> (x boleh bernilai berapa saja)","Jadi, jika a tidak nol dan domain awalnya semua bilangan real, maka domain invers adalah himpunan bilangan real. Artinya x boleh bernilai berapa saja.","ok"]]},
+{c:"#e07a5f",t:"Invers Fungsi Rasional",v:`<span class="chip">a ⇄ −d</span><br><span class="chip">b, c tetap</span>`,s:[
+ ["Bentuk umum: f(x) = "+F("ax + b","cx + d")+" , syarat <b>ad − bc ≠ 0</b>","Bentuk umum fungsi rasional adalah a x tambah b per c x tambah d, dengan syarat a d kurang b c tidak sama dengan nol.","syarat"],
+ ["<b>Misalkan</b> y = "+F("ax + b","cx + d"),"Pertama, misalkan f x sama dengan y."],
+ ["<b>Tukar x dan y:</b> x = "+F("ay + b","cy + d"),"Kedua, tukar posisi x dan y."],
+ ["<b>Kalikan silang:</b> x(cy + d) = ay + b → cxy + dx = ay + b","Ketiga, kalikan silang, lalu jabarkan ruas kiri."],
+ ["<b>Pindahkan suku yang memuat y</b> ke satu ruas: cxy − ay = b − dx","Keempat, pindahkan suku yang memuat y ke satu ruas."],
+ ["<b>Faktorkan y:</b> y(cx − a) = b − dx","Kelima, faktorkan y."],
+ ["<b>Sehingga:</b> f⁻¹(x) = "+F("b − dx","cx − a"),"Sehingga f invers x sama dengan b kurang d x, per c x kurang a.","ok"],
+ ["<b>Domain f⁻¹:</b> lihat penyebut cx − a, penyebut tidak boleh nol → cx − a ≠ 0","Sekarang domain inversnya. Lihat penyebutnya, yaitu c x kurang a. Penyebut tidak boleh nol.","syarat"],
+ ["x ≠ "+F("a","c")+" → <b>D<sub>f⁻¹</sub> : x ≠ "+F("a","c")+"</b>","Maka x tidak sama dengan a per c. Nilai x yang membuat penyebut nol tidak boleh digunakan.","ok"]]},
+{c:"#6a9fb5",t:"Invers Fungsi Kuadrat",v:par(false),s:[
+ ["Bentuk umum: f(x) = ax² + bx + c , <b>a ≠ 0</b>","Bentuk umum fungsi kuadrat adalah a x kuadrat tambah b x tambah c, dengan a tidak nol.","syarat"],
+ ["Agar punya invers, domain f dibatasi satu sisi: x ≥ "+F("−b","2a")+" atau x ≤ "+F("−b","2a"),"Agar punya invers, domain f dibatasi satu sisi dari sumbu simetri, yaitu minus b per dua a.","syarat"],
+ ["<b>Misalkan</b> y = ax² + bx + c","Pertama, misalkan f x sama dengan y."],
+ ["<b>Tukar x dan y:</b> x = ay² + by + c","Kedua, tukar posisi x dan y."],
+ ["<b>Pindahkan semua suku:</b> ay² + by + c − x = 0","Ketiga, pindahkan semua suku ke satu ruas."],
+ ["<b>Lengkapi kuadrat:</b> y² + "+F("b","a")+"y = "+F("x − c","a"),"Keempat, bagi dengan a, lalu siapkan untuk melengkapi kuadrat."],
+ ["<b>Tambahkan</b> "+F("b²","4a²")+" pada kedua ruas: (y + "+F("b","2a")+")² = "+F("x − c","a")+" + "+F("b²","4a²"),"Kelima, tambahkan b kuadrat per empat a kuadrat pada kedua ruas."],
+ ["<b>Samakan penyebut:</b> (y + "+F("b","2a")+")² = "+F("b² + 4a(x − c)","4a²"),"Keenam, samakan penyebutnya."],
+ ["<b>Uraikan bagian dalam kurung:</b> (y + "+F("b","2a")+")² = "+F("b² + 4ax − 4ac","4a²"),"Ketujuh, uraikan bagian dalam kurung."],
+ ["<b>Akar kedua ruas:</b> y + "+F("b","2a")+" = ± "+F(R("b² − 4ac + 4ax"),"2a"),"Kedelapan, tarik akar kedua ruas."],
+ ["<b>Sehingga:</b> f⁻¹(x) = "+F("−b ± "+R("b² − 4ac + 4ax"),"2a"),"Sehingga bentuk inversnya, minus b plus minus akar b kuadrat kurang empat a c tambah empat a x, per dua a.","ok"],
+ ["<b>Domain f⁻¹:</b> lihat bagian dalam akar, bagian dalam akar harus ≥ 0 → "+F("b² + 4ax − 4ac","4a²")+" ≥ 0","Sekarang domain inversnya. Lihat bagian dalam akar. Bagian dalam akar harus lebih dari atau sama dengan nol.","syarat"],
+ ["Jika a > 0: <b>x ≥ "+F("4ac − b²","4a")+"</b>","Jika a lebih dari nol, maka x lebih dari atau sama dengan empat a c kurang b kuadrat, per empat a.","ok"],
+ ["Jika a < 0: <b>x ≤ "+F("4ac − b²","4a")+"</b>","Jika a kurang dari nol, tanda pertidaksamaan berbalik, maka x kurang dari atau sama dengan empat a c kurang b kuadrat, per empat a.","ok"]]},
+{c:"#9b7bb8",t:"Rangkuman Petualangan 🌿",v:`🌳<br>⭐`,s:[
+ ["<b>Linear</b> ax + b → "+F("x − b","a")+"  |  a ≠ 0 , D = ℝ","Linear: inversnya x kurang b per a. Syaratnya a tidak nol, dan domainnya semua bilangan real.","ok"],
+ ["<b>Rasional</b> "+F("ax + b","cx + d")+" → "+F("b − dx","cx − a")+"  |  ad − bc ≠ 0 , x ≠ "+F("a","c"),"Rasional: inversnya b kurang d x per c x kurang a. Syaratnya a d kurang b c tidak nol, dan x tidak sama dengan a per c.","ok"],
+ ["<b>Kuadrat</b> ax² + bx + c → "+F("−b ± "+R("b² − 4ac + 4ax"),"2a")+"  |  a > 0: x ≥ "+F("4ac − b²","4a")+" ; a < 0: x ≤ "+F("4ac − b²","4a"),"Kuadrat: inversnya minus b plus minus akar, per dua a. Domainnya bergantung pada tanda a.","ok"],
+ ["Selamat belajar! 🎉","Selamat belajar dan sampai jumpa!"]]}
+];
+const total=S.reduce((a,s)=>a+s.s.length,0);
+let si=0,k=0,playing=false,voice=false,timer=null,tok=0;
+const $=id=>document.getElementById(id);
+function gidx(){let n=0;for(let i=0;i<si;i++)n+=S[i].s.length;return n+k+1}
+function render(){
+ const s=S[si];
+ $("stage").style.setProperty("--ac",s.c);
+ $("top").style.background=s.c;
+ $("top").innerHTML=`<span>${s.t}</span><small>${si+1} / ${S.length}</small>`;
+ const v=$("vis");if(v.dataset.i!=s.t){v.dataset.i=s.t;v.innerHTML=s.v;}
+ $("body").innerHTML=s.s.slice(0,k+1).map((x,i)=>`<div class="ln ${x[2]||""} ${i===k?"cur":""}">${x[0]}</div>`).join("");
+ $("cap").textContent=s.s[k][1];
+ $("pg").style.width=(gidx()/total*100)+"%";
+ $("pg").style.background=s.c;
+}
+function stopSpeech(){try{speechSynthesis.cancel()}catch(e){}}
+function schedule(){
+ clearTimeout(timer);stopSpeech();tok++;
+ if(!playing)return;
+ const my=tok,n=S[si].s[k][1],go=()=>{if(playing&&my===tok)next()};
+ if(voice&&window.speechSynthesis){
+  try{const u=new SpeechSynthesisUtterance(n);u.lang="id-ID";u.onend=()=>setTimeout(go,500);speechSynthesis.speak(u);}catch(e){}
+  timer=setTimeout(go,n.length*110+5000);
+ }else{timer=setTimeout(go,Math.max(3500,n.length*70));}
+}
+function next(){
+ const s=S[si];
+ if(k<s.s.length-1)k++;
+ else if(si<S.length-1){si++;k=0}
+ else{playing=false;clearTimeout(timer);stopSpeech();render();upd();return}
+ render();schedule();upd();
+}
+function prev(){
+ if(k>0)k--;else if(si>0){si--;k=S[si].s.length-1}
+ render();schedule();
+}
+function upd(){$("bPlay").textContent=playing?"⏸ Jeda":(gidx()===total?"↺ Ulangi":"▶ Putar")}
+$("bPlay").onclick=()=>{
+ if(!playing&&gidx()===total){si=0;k=0;render()}
+ playing=!playing;upd();schedule();
+};
+$("bNext").onclick=()=>{next()};
+$("bPrev").onclick=()=>{prev();upd()};
+$("bVoice").onclick=()=>{
+ voice=!voice;$("bVoice").textContent=voice?"🔊 Suara: hidup":"🔇 Suara: mati";
+ $("bVoice").classList.toggle("on",voice);
+ if(!voice)stopSpeech();schedule();
+};
+render();upd();
+</script>
+</body>
+</html>
